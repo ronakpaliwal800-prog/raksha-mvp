@@ -1,595 +1,764 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>RAKSHA — AI Scam Protection</title>
+<head>
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>RAKSHA — AI Scam Guardian</title>
 
 <style>
-  :root {
-    --dark: #0b141a;
-    --panel: #111b21;
-    --header: #202c33;
-    --bubble-bot: #202c33;
-    --bubble-user: #005c4b;
-    --accent: #00a884;
-    --danger: #e05252;
-    --safe: #3fbf6f;
-    --warn: #e0a940;
-    --text: #e9edef;
-    --dim: #8696a0;
-    --border: #2a3942;
-    --font: "Segoe UI", Helvetica, Arial, sans-serif;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    padding: 20px;
-    font-family: var(--font);
-    background:
-      radial-gradient(circle at top, #14232a 0%, #0a0f12 45%, #050809 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text);
-  }
-
-  .phone {
-    width: 430px;
-    max-width: 100%;
-    height: 820px;
-    background: var(--dark);
-    border-radius: 26px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #26343b;
-    box-shadow: 0 25px 80px rgba(0,0,0,.55);
-  }
-
-  /* HEADER */
-
-  .header {
-    background: var(--header);
-    padding: 15px 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid #111a1f;
-  }
-
-  .avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-  }
-
-  .header-text .name {
-    font-size: 17px;
-    font-weight: 700;
-  }
-
-  .header-text .status {
-    color: var(--dim);
-    font-size: 12px;
-    margin-top: 2px;
-  }
-
-  .online {
-    margin-left: auto;
-    font-size: 11px;
-    color: var(--safe);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .online-dot {
-    width: 7px;
-    height: 7px;
-    background: var(--safe);
-    border-radius: 50%;
-  }
-
-  /* SECURITY BANNER */
-
-  .security-banner {
-    padding: 9px 14px;
-    background: #0d191e;
-    border-bottom: 1px solid #1b292f;
-    font-size: 11px;
-    color: var(--dim);
-    text-align: center;
-  }
-
-  .security-banner strong {
-    color: var(--accent);
-  }
-
-  /* MESSAGES */
-
-  .messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 18px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    background-image:
-      radial-gradient(
-        circle at 20% 20%,
-        rgba(255,255,255,.025) 0%,
-        transparent 50%
-      );
-  }
-
-  .bubble {
-    max-width: 88%;
-    padding: 12px 13px;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.5;
-    word-break: break-word;
-  }
-
-  .bubble.user {
-    align-self: flex-end;
-    background: var(--bubble-user);
-    border-bottom-right-radius: 3px;
-  }
-
-  .bubble.bot {
-    align-self: flex-start;
-    background: var(--bubble-bot);
-    border-bottom-left-radius: 3px;
-  }
-
-  .bubble.system {
-    align-self: center;
-    max-width: 94%;
-    text-align: center;
-    color: var(--dim);
-    font-size: 12px;
-    background: transparent;
-  }
-
-  /* VERDICT */
-
-  .verdict-box {
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    border: 1px solid rgba(255,255,255,.08);
-  }
-
-  .verdict-box.scam {
-    background: rgba(224,82,82,.08);
-    border-color: rgba(224,82,82,.25);
-  }
-
-  .verdict-box.suspicious {
-    background: rgba(224,169,64,.08);
-    border-color: rgba(224,169,64,.25);
-  }
-
-  .verdict-box.safe {
-    background: rgba(63,191,111,.08);
-    border-color: rgba(63,191,111,.25);
-  }
-
-  .verdict-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .verdict-tag {
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: .4px;
-    padding: 5px 9px;
-    border-radius: 6px;
-  }
-
-  .verdict-tag.SCAM {
-    background: rgba(224,82,82,.18);
-    color: var(--danger);
-  }
-
-  .verdict-tag.SUSPICIOUS {
-    background: rgba(224,169,64,.18);
-    color: var(--warn);
-  }
-
-  .verdict-tag.LIKELY_SAFE {
-    background: rgba(63,191,111,.18);
-    color: var(--safe);
-  }
-
-  .risk {
-    font-size: 12px;
-    color: var(--dim);
-  }
-
-  .risk strong {
-    font-size: 17px;
-    color: var(--text);
-  }
-
-  /* RISK BAR */
-
-  .risk-bar {
-    height: 7px;
-    background: #26343b;
-    border-radius: 20px;
-    overflow: hidden;
-    margin-top: 10px;
-  }
-
-  .risk-fill {
-    height: 100%;
-    border-radius: 20px;
-    transition: width .6s ease;
-  }
-
-  .risk-fill.high {
-    background: var(--danger);
-  }
-
-  .risk-fill.medium {
-    background: var(--warn);
-  }
-
-  .risk-fill.low {
-    background: var(--safe);
-  }
-
-  /* CONTENT */
-
-  .section-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--dim);
-    margin-top: 10px;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: .4px;
-  }
-
-  .summary {
-    margin-bottom: 5px;
-  }
-
-  .redflags {
-    margin: 5px 0 0;
-    padding-left: 19px;
-    color: #c7d0d4;
-    font-size: 13px;
-  }
-
-  .redflags li {
-    margin-bottom: 5px;
-  }
-
-  .recommendation {
-    margin-top: 12px;
-    padding: 11px;
-    border-radius: 9px;
-    background: rgba(0,168,132,.09);
-    border: 1px solid rgba(0,168,132,.2);
-  }
-
-  .recommendation strong {
-    color: var(--accent);
-  }
-
-  .legitimacy {
-    color: #c7d0d4;
-    font-size: 13px;
-  }
-
-  /* ATTACHMENT */
-
-  .bubble img.attach {
-    max-width: 100%;
-    max-height: 250px;
-    border-radius: 8px;
-    margin-bottom: 7px;
-    display: block;
-  }
-
-  /* TYPING */
-
-  .typing {
-    align-self: flex-start;
-    color: var(--dim);
-    font-size: 13px;
-    font-style: italic;
-    padding: 4px 12px;
-  }
-
-  .typing::before {
-    content: "🛡️ ";
-  }
-
-  /* PREVIEW */
-
-  .preview-strip {
-    padding: 8px 12px;
-    background: var(--header);
-    border-top: 1px solid #26343b;
-  }
-
-  .preview-container {
-    position: relative;
-    display: inline-block;
-  }
-
-  .preview-strip img {
-    height: 62px;
-    max-width: 120px;
-    object-fit: cover;
-    border-radius: 7px;
-    border: 1px solid #3a4a52;
-  }
-
-  .remove-image {
-    position: absolute;
-    top: -7px;
-    right: -7px;
-    width: 20px;
-    height: 20px;
-    border: none;
-    border-radius: 50%;
-    background: var(--danger);
-    color: white;
-    cursor: pointer;
-    font-size: 12px;
-  }
-
-  /* INPUT */
-
-  .input-bar {
-    background: var(--header);
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .input-bar input[type="text"] {
-    flex: 1;
-    min-width: 0;
-    background: #2a3942;
-    border: none;
-    border-radius: 22px;
-    padding: 11px 14px;
-    color: var(--text);
-    font-size: 14px;
-    outline: none;
-  }
-
-  .input-bar input[type="text"]::placeholder {
-    color: #8696a0;
-  }
-
-  .icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    color: var(--dim);
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-  }
-
-  .icon-btn:hover {
-    background: rgba(255,255,255,.07);
-  }
-
-  .send-btn {
-    background: var(--accent);
-    color: #0b141a;
-  }
-
-  .send-btn:hover {
-    background: #04c599;
-  }
-
-  .send-btn:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-  }
-
-  #imageInput {
-    display: none;
-  }
-
-  /* CONFIG */
-
-  .config-bar {
-    background: #0a0f12;
-    padding: 6px 10px;
-    font-size: 10px;
-    color: var(--dim);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .config-bar input {
-    flex: 1;
-    min-width: 0;
-    background: transparent;
-    border: 1px solid #26343b;
-    border-radius: 5px;
-    color: var(--dim);
-    font-size: 10px;
-    padding: 3px 6px;
-  }
-
-  /* MOBILE */
-
-  @media (max-width: 500px) {
-    body {
-      padding: 0;
-    }
-
-    .phone {
-      width: 100%;
-      height: 100vh;
-      border-radius: 0;
-      border: none;
-    }
-  }
+
+:root {
+  --bg: #071014;
+  --panel: #101b21;
+  --panel2: #16252d;
+  --text: #edf4f5;
+  --muted: #91a4ab;
+  --green: #00c896;
+  --red: #ff5c67;
+  --yellow: #ffbd4a;
+  --blue: #58a6ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at 50% 0,
+      #17333d 0,
+      #071014 48%
+    );
+
+  color: var(--text);
+
+  font-family:
+    Segoe UI,
+    Arial,
+    sans-serif;
+
+  display: flex;
+  justify-content: center;
+
+  padding: 18px;
+}
+
+.app {
+  width: 500px;
+  max-width: 100%;
+  min-height: 850px;
+
+  background: var(--bg);
+
+  border: 1px solid #20343d;
+
+  border-radius: 28px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 24px 80px #0009;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  padding: 18px;
+
+  background: var(--panel);
+
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  border-bottom:
+    1px solid #20343d;
+}
+
+.shield {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 15px;
+
+  background: var(--green);
+
+  display: grid;
+  place-items: center;
+
+  font-size: 26px;
+}
+
+.name {
+  font-weight: 900;
+  font-size: 19px;
+}
+
+.sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.modes {
+  display: grid;
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 8px;
+
+  padding: 12px;
+
+  background: #0b151a;
+}
+
+.mode {
+  border:
+    1px solid #29404a;
+
+  background: var(--panel2);
+
+  color: var(--text);
+
+  border-radius: 12px;
+
+  padding: 11px 5px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+}
+
+.mode.active {
+  border-color:
+    var(--green);
+
+  box-shadow:
+    inset 0 0 0 1px
+    var(--green);
+}
+
+.messages {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 14px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.bubble {
+  max-width: 94%;
+
+  padding: 12px;
+
+  border-radius: 15px;
+
+  line-height: 1.5;
+
+  font-size: 14px;
+
+  word-break: break-word;
+}
+
+.bot {
+  align-self: flex-start;
+
+  background: var(--panel2);
+}
+
+.user {
+  align-self: flex-end;
+
+  background: #075d4e;
+}
+
+.typing {
+  color: var(--muted);
+
+  font-size: 12px;
+
+  padding: 5px 10px;
+}
+
+.toolbar {
+  display: flex;
+
+  gap: 7px;
+
+  padding: 9px 10px;
+
+  background: #0b151a;
+}
+
+.small {
+  flex: 1;
+
+  border:
+    1px solid #2b414a;
+
+  background: #16252d;
+
+  color: #dce8ea;
+
+  border-radius: 10px;
+
+  padding: 9px 6px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+}
+
+.small:hover {
+  border-color:
+    var(--green);
+}
+
+input[type=file] {
+  display: none;
+}
+
+.preview {
+  padding:
+    0 10px 8px;
+
+  background:
+    var(--panel);
+}
+
+.preview img {
+  max-width: 100px;
+  max-height: 80px;
+
+  border-radius: 9px;
+}
+
+.input {
+  background: var(--panel);
+
+  padding: 10px;
+
+  display: flex;
+
+  gap: 7px;
+
+  align-items: center;
+
+  border-top:
+    1px solid #20343d;
+}
+
+.input textarea {
+  flex: 1;
+
+  resize: none;
+
+  height: 46px;
+
+  border: 0;
+
+  outline: 0;
+
+  background: #25363e;
+
+  color: var(--text);
+
+  border-radius: 20px;
+
+  padding:
+    12px 14px;
+
+  font:
+    14px Segoe UI;
+}
+
+.btn {
+  border: 0;
+
+  border-radius: 50%;
+
+  width: 44px;
+  height: 44px;
+
+  cursor: pointer;
+
+  background:
+    var(--green);
+
+  font-size: 18px;
+}
+
+.config {
+  font-size: 10px;
+
+  color: #71858c;
+
+  padding:
+    6px 10px;
+
+  background:
+    #071014;
+}
+
+.config input {
+  width: 100%;
+
+  background:
+    transparent;
+
+  border:
+    1px solid #20343d;
+
+  color: #8ea2a8;
+
+  border-radius: 6px;
+
+  padding: 5px;
+}
+
+/* RESULT */
+
+.card {
+  margin-top: 8px;
+
+  border:
+    1px solid #2b414a;
+
+  border-radius: 16px;
+
+  padding: 14px;
+
+  background:
+    #0d181d;
+}
+
+.verdict {
+  font-weight: 900;
+
+  font-size: 22px;
+}
+
+.score {
+  font-size: 42px;
+
+  font-weight: 900;
+
+  margin:
+    2px 0 8px;
+}
+
+.SCAM {
+  color:
+    var(--red);
+}
+
+.SUSPICIOUS {
+  color:
+    var(--yellow);
+}
+
+.SAFE {
+  color:
+    #5ee18d;
+}
+
+.pill {
+  display: inline-block;
+
+  padding:
+    5px 9px;
+
+  border-radius: 999px;
+
+  background:
+    #263840;
+
+  color:
+    #cfe0e5;
+
+  font-size: 11px;
+
+  margin-bottom: 8px;
+}
+
+.confidence {
+  font-size: 11px;
+
+  color:
+    var(--muted);
+
+  margin-bottom:
+    10px;
+}
+
+.section {
+  margin-top:
+    16px;
+
+  padding-top:
+    10px;
+
+  border-top:
+    1px solid #22343b;
+}
+
+.section h3 {
+  margin:
+    0 0 9px;
+
+  font-size:
+    14px;
+}
+
+.flag {
+  padding:
+    8px 0;
+
+  border-bottom:
+    1px solid #22343b;
+
+  color:
+    #dbe6e8;
+}
+
+.signal {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  gap: 8px;
+
+  padding:
+    8px 0;
+
+  border-bottom:
+    1px solid #1d3037;
+}
+
+.signal small {
+  color:
+    var(--muted);
+}
+
+.high {
+  color:
+    var(--red);
+}
+
+.medium {
+  color:
+    var(--yellow);
+}
+
+.low {
+  color:
+    #5ee18d;
+}
+
+.actions {
+  margin:
+    8px 0 0;
+
+  padding-left:
+    21px;
+}
+
+.actions li {
+  margin:
+    7px 0;
+}
+
+.elder {
+  font-size:
+    17px;
+
+  line-height:
+    1.65;
+}
+
+.hindi {
+  font-size:
+    17px;
+
+  line-height:
+    1.75;
+}
+
+/* FAMILY SHIELD */
+
+.family {
+  margin-top:
+    14px;
+
+  padding:
+    14px;
+
+  border:
+    1px solid #ff5c67;
+
+  background:
+    #241417;
+
+  border-radius:
+    14px;
+}
+
+.family h3 {
+  margin:
+    0 0 7px;
+
+  color:
+    var(--red);
+}
+
+.family button {
+  width: 100%;
+
+  margin-top:
+    10px;
+
+  padding:
+    11px;
+
+  border: 0;
+
+  border-radius:
+    10px;
+
+  background:
+    var(--red);
+
+  color:
+    white;
+
+  font-weight:
+    800;
+
+  cursor:
+    pointer;
+}
+
+.family-success {
+  color:
+    #5ee18d;
+
+  font-weight:
+    700;
+}
+
+/* HERO */
+
+.hero {
+  padding:
+    10px 14px 4px;
+
+  text-align:
+    center;
+}
+
+.hero-title {
+  font-size:
+    13px;
+
+  color:
+    var(--muted);
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="phone">
+<div class="app">
 
   <!-- HEADER -->
 
-  <div class="header">
+  <div class="top">
 
-    <div class="avatar">🛡️</div>
-
-    <div class="header-text">
-      <div class="name">RAKSHA</div>
-      <div class="status">AI Scam Protection</div>
+    <div class="shield">
+      🛡️
     </div>
 
-    <div class="online">
-      <span class="online-dot"></span>
-      ONLINE
+    <div>
+
+      <div class="name">
+        RAKSHA
+      </div>
+
+      <div class="sub">
+        AI Scam Guardian · India
+      </div>
+
     </div>
 
   </div>
 
-  <!-- SECURITY MESSAGE -->
+  <!-- MODES -->
 
-  <div class="security-banner">
-    <strong>RAKSHA AI</strong> checks suspicious messages before you act.
+  <div class="modes">
+
+    <button
+      class="mode active"
+      id="elderBtn"
+    >
+      👵 Elder Mode
+    </button>
+
+    <button
+      class="mode"
+      id="normalBtn"
+    >
+      ⚡ Normal
+    </button>
+
+    <button
+      class="mode"
+      id="hindiBtn"
+    >
+      🇮🇳 Hindi
+    </button>
+
   </div>
 
-  <!-- BACKEND CONFIG -->
-
-  <div class="config-bar">
-    Backend:
-    <input
-      id="backendUrl"
-      type="text"
-      value="https://raksha-backend-gnt2.onrender.com/api/analyze"
-    />
+  <div class="hero">
+    <div class="hero-title">
+      Check messages, screenshots and voice recordings before you act.
+    </div>
   </div>
 
   <!-- CHAT -->
 
-  <div class="messages" id="messages">
+  <div
+    class="messages"
+    id="messages"
+  >
 
     <div class="bubble bot">
 
-      <strong>Namaste! 👋</strong>
+      Namaste! I'm RAKSHA 🛡️
 
       <br><br>
 
-      I'm <strong>RAKSHA 🛡️</strong>.
+      Send me a suspicious message,
+      screenshot or voice recording.
 
       <br><br>
 
-      Send me a suspicious WhatsApp/SMS message and I'll check:
+      I'll check for:
 
-      <ul class="redflags">
-        <li>🚨 Scam risk</li>
-        <li>🔎 Red flags</li>
-        <li>🧠 Why it looks suspicious</li>
-        <li>✅ What you should do</li>
-      </ul>
+      <br>
 
-      <strong>When in doubt, check with RAKSHA before you act.</strong>
+      🚨 Scam signals
+      <br>
+      🔗 Suspicious links
+      <br>
+      💳 Payment requests
+      <br>
+      🎭 Impersonation
+      <br>
+      🧠 Manipulation tactics
 
     </div>
 
   </div>
 
-  <!-- IMAGE PREVIEW -->
+  <!-- TOOLS -->
+
+  <div class="toolbar">
+
+    <button
+      class="small"
+      id="imageBtn"
+    >
+      📸 Screenshot
+    </button>
+
+    <button
+      class="small"
+      id="audioBtn"
+    >
+      🎙️ Voice
+    </button>
+
+    <button
+      class="small"
+      id="clearBtn"
+    >
+      🧹 Clear
+    </button>
+
+    <input
+      id="imageInput"
+      type="file"
+      accept="image/*"
+    >
+
+    <input
+      id="audioInput"
+      type="file"
+      accept="audio/*"
+    >
+
+  </div>
+
+  <!-- PREVIEW -->
 
   <div
-    class="preview-strip"
-    id="previewStrip"
-    style="display:none;"
+    class="preview"
+    id="preview"
+    style="display:none"
   >
-    <div class="preview-container">
 
-      <img
-        id="previewImg"
-        src=""
-        alt="Screenshot preview"
-      />
+    <img
+      id="previewImg"
+    >
 
-      <button
-        class="remove-image"
-        id="removeImage"
-        title="Remove"
-      >
-        ×
-      </button>
-
-    </div>
   </div>
 
   <!-- INPUT -->
 
-  <div class="input-bar">
+  <div class="input">
+
+    <textarea
+      id="text"
+      placeholder="Paste suspicious message here..."
+    ></textarea>
 
     <button
-      class="icon-btn"
-      id="attachBtn"
-      title="Attach screenshot"
-    >
-      📎
-    </button>
-
-    <input
-      type="file"
-      id="imageInput"
-      accept="image/*"
-    />
-
-    <input
-      type="text"
-      id="textInput"
-      placeholder="Paste suspicious message..."
-      autocomplete="off"
-    />
-
-    <button
-      class="icon-btn send-btn"
-      id="sendBtn"
-      title="Analyze"
+      class="btn"
+      id="send"
     >
       ➤
     </button>
+
+  </div>
+
+  <!-- BACKEND -->
+
+  <div class="config">
+
+    Backend
+
+    <input
+      id="backend"
+      value="http://localhost:3000/api/analyze"
+    >
 
   </div>
 
@@ -598,581 +767,847 @@
 
 <script>
 
-  /* =========================
-     ELEMENTS
-  ========================= */
+const $ =
+  id =>
+  document.getElementById(id);
 
-  const messagesEl =
-    document.getElementById("messages");
+const messages =
+  $('messages');
 
-  const textInput =
-    document.getElementById("textInput");
+let image = null;
 
-  const sendBtn =
-    document.getElementById("sendBtn");
+let audio = null;
 
-  const attachBtn =
-    document.getElementById("attachBtn");
-
-  const imageInput =
-    document.getElementById("imageInput");
-
-  const previewStrip =
-    document.getElementById("previewStrip");
-
-  const previewImg =
-    document.getElementById("previewImg");
-
-  const removeImage =
-    document.getElementById("removeImage");
-
-  const backendUrlInput =
-    document.getElementById("backendUrl");
+let mode = 'elder';
 
 
-  /* =========================
-     IMAGE STATE
-  ========================= */
+/*
+========================================================
+MODES
+========================================================
+*/
 
-  let pendingImageBase64 = null;
-  let pendingImageMediaType = null;
+$('elderBtn').onclick =
+  () => setMode('elder');
+
+$('normalBtn').onclick =
+  () => setMode('normal');
+
+$('hindiBtn').onclick =
+  () => setMode('hindi');
 
 
-  /* =========================
-     IMAGE ATTACHMENT
-  ========================= */
+function setMode(m) {
 
-  attachBtn.addEventListener("click", () => {
-    imageInput.click();
-  });
+  mode = m;
+
+  document
+    .querySelectorAll('.mode')
+    .forEach(
+      x =>
+      x.classList.remove('active')
+    );
+
+  $(m + 'Btn')
+    .classList.add('active');
+}
 
 
-  imageInput.addEventListener("change", () => {
+/*
+========================================================
+FILE BUTTONS
+========================================================
+*/
 
-    const file = imageInput.files[0];
+$('imageBtn').onclick =
+  () =>
+  $('imageInput').click();
 
-    if (!file) return;
+$('audioBtn').onclick =
+  () =>
+  $('audioInput').click();
 
-    const reader = new FileReader();
 
-    reader.onload = () => {
+/*
+========================================================
+IMAGE
+========================================================
+*/
 
-      const result = reader.result;
+$('imageInput').onchange =
+  () => {
 
-      const parts = result.split(",");
+    const file =
+      $('imageInput').files[0];
 
-      pendingImageBase64 = parts[1];
+    if (!file)
+      return;
 
-      pendingImageMediaType =
-        file.type || "image/jpeg";
+    const reader =
+      new FileReader();
 
-      previewImg.src = result;
+    reader.onload =
+      () => {
 
-      previewStrip.style.display = "block";
-    };
+        image = {
+
+          base64:
+            reader.result.split(',')[1],
+
+          mime:
+            file.type
+
+        };
+
+        $('previewImg').src =
+          reader.result;
+
+        $('preview')
+          .style.display =
+          'block';
+
+      };
 
     reader.readAsDataURL(file);
-  });
+  };
 
 
-  removeImage.addEventListener("click", clearImage);
+/*
+========================================================
+AUDIO
+========================================================
+*/
+
+$('audioInput').onchange =
+  () => {
+
+    const file =
+      $('audioInput').files[0];
+
+    if (!file)
+      return;
+
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      () => {
+
+        audio = {
+
+          base64:
+            reader.result.split(',')[1],
+
+          mime:
+            file.type ||
+            'audio/webm'
+
+        };
+
+        $('preview')
+          .style.display =
+          'block';
+
+        $('preview').innerHTML =
+          `<div class="pill">
+            🎙️ ${esc(file.name)}
+            ready to analyze
+          </div>`;
+
+      };
+
+    reader.readAsDataURL(file);
+  };
 
 
-  function clearImage() {
+/*
+========================================================
+HELPERS
+========================================================
+*/
 
-    pendingImageBase64 = null;
+function esc(value) {
 
-    pendingImageMediaType = null;
+  const div =
+    document.createElement('div');
 
-    imageInput.value = "";
+  div.textContent =
+    value ?? '';
 
-    previewImg.src = "";
+  return div.innerHTML;
+}
 
-    previewStrip.style.display = "none";
+
+function add(html, cls) {
+
+  const div =
+    document.createElement('div');
+
+  div.className =
+    'bubble ' + cls;
+
+  div.innerHTML =
+    html;
+
+  messages.appendChild(div);
+
+  messages.scrollTop =
+    messages.scrollHeight;
+}
+
+
+function typing() {
+
+  const div =
+    document.createElement('div');
+
+  div.className =
+    'typing';
+
+  div.id =
+    'typing';
+
+  div.textContent =
+    '🛡️ RAKSHA is analyzing...';
+
+  messages.appendChild(div);
+
+  messages.scrollTop =
+    messages.scrollHeight;
+}
+
+
+function stopTyping() {
+
+  const element =
+    $('typing');
+
+  if (element)
+    element.remove();
+}
+
+
+/*
+========================================================
+RESULT CARD
+========================================================
+*/
+
+function resultCard(data) {
+
+  const verdict =
+    data.verdict ||
+    'SUSPICIOUS';
+
+  const score =
+    Number(data.riskScore) ||
+    0;
+
+  const confidence =
+    Number(data.confidence) ||
+    0;
+
+
+  /*
+  SIGNALS
+  */
+
+  const signals =
+    (data.signals || [])
+      .map(signal => {
+
+        const level =
+          String(
+            signal.level || 'LOW'
+          ).toLowerCase();
+
+        return `
+
+          <div class="signal">
+
+            <span>
+
+              <b>
+                ${esc(signal.name)}
+              </b>
+
+              <br>
+
+              <small>
+                ${esc(signal.reason)}
+              </small>
+
+            </span>
+
+            <b class="${level}">
+              ${esc(signal.level)}
+            </b>
+
+          </div>
+
+        `;
+
+      })
+      .join('');
+
+
+  /*
+  RED FLAGS
+  */
+
+  const flags =
+    (data.redFlags || [])
+      .map(flag => {
+
+        return `
+
+          <div class="flag">
+
+            🚩 ${esc(flag)}
+
+          </div>
+
+        `;
+
+      })
+      .join('');
+
+
+  /*
+  ACTIONS
+  */
+
+  const actions =
+    (data.actions || [])
+      .map(action => {
+
+        return `
+          <li>
+            ${esc(action)}
+          </li>
+        `;
+
+      })
+      .join('');
+
+
+  /*
+  EXPLANATION
+  */
+
+  let explanation;
+
+  if (mode === 'hindi') {
+
+    explanation =
+      data.hindiExplanation;
+
+  }
+
+  else if (mode === 'elder') {
+
+    explanation =
+      data.elderExplanation;
+
+  }
+
+  else {
+
+    explanation =
+      data.summary;
+
   }
 
 
-  /* =========================
-     HTML ESCAPE
-  ========================= */
+  /*
+  FAMILY SHIELD
+  */
 
-  function escapeHtml(str) {
+  let familyHTML = '';
 
-    if (str === null || str === undefined) {
-      return "";
-    }
+  if (
+    data.familyAlert ||
+    score >= 85
+  ) {
 
-    const div = document.createElement("div");
+    familyHTML = `
 
-    div.textContent = String(str);
+      <div
+        class="family"
+        id="familyBox"
+      >
 
-    return div.innerHTML;
-  }
+        <h3>
+          🚨 Family Shield
+        </h3>
 
+        <div>
 
-  /* =========================
-     ADD MESSAGE
-  ========================= */
-
-  function addBubble(html, sender) {
-
-    const div =
-      document.createElement("div");
-
-    div.className =
-      `bubble ${sender}`;
-
-    div.innerHTML = html;
-
-    messagesEl.appendChild(div);
-
-    messagesEl.scrollTop =
-      messagesEl.scrollHeight;
-
-    return div;
-  }
-
-
-  /* =========================
-     TYPING
-  ========================= */
-
-  function addTyping() {
-
-    const div =
-      document.createElement("div");
-
-    div.className = "typing";
-
-    div.id = "typingIndicator";
-
-    div.textContent =
-      "RAKSHA is analyzing the message...";
-
-    messagesEl.appendChild(div);
-
-    messagesEl.scrollTop =
-      messagesEl.scrollHeight;
-  }
-
-
-  function removeTyping() {
-
-    const el =
-      document.getElementById(
-        "typingIndicator"
-      );
-
-    if (el) {
-      el.remove();
-    }
-  }
-
-
-  /* =========================
-     RISK CLASS
-  ========================= */
-
-  function getRiskClass(score) {
-
-    if (score >= 70) {
-      return "high";
-    }
-
-    if (score >= 40) {
-      return "medium";
-    }
-
-    return "low";
-  }
-
-
-  /* =========================
-     VERDICT CLASS
-  ========================= */
-
-  function getVerdictClass(verdict) {
-
-    const v =
-      String(verdict || "")
-        .toUpperCase();
-
-    if (v === "SCAM") {
-      return "scam";
-    }
-
-    if (
-      v === "SUSPICIOUS" ||
-      v === "UNCERTAIN"
-    ) {
-      return "suspicious";
-    }
-
-    return "safe";
-  }
-
-
-  /* =========================
-     DISPLAY RESULT
-  ========================= */
-
-  function displayResult(data) {
-
-    const verdict =
-      String(data.verdict || "SUSPICIOUS")
-        .toUpperCase();
-
-    const score =
-      Math.max(
-        0,
-        Math.min(
-          100,
-          Number(data.riskScore ?? 0)
-        )
-      );
-
-    const verdictClass =
-      getVerdictClass(verdict);
-
-    const riskClass =
-      getRiskClass(score);
-
-
-    /* RED FLAGS */
-
-    const flags =
-      Array.isArray(data.redFlags)
-        ? data.redFlags
-        : [];
-
-    const flagsHtml =
-      flags
-        .map(
-          flag =>
-            `<li>${escapeHtml(flag)}</li>`
-        )
-        .join("");
-
-
-    /* SUMMARY */
-
-    const summary =
-      data.summary ||
-      "RAKSHA could not generate a detailed summary.";
-
-
-    /* LEGITIMACY */
-
-    const legitimacy =
-      data.legitimacyCheck ||
-      "No additional legitimacy check was provided.";
-
-
-    /* RECOMMENDATION */
-
-    const recommendation =
-      data.recommendedAction ||
-      "Do not share personal information or click suspicious links. Verify independently.";
-
-
-    /* FINAL HTML */
-
-    const html = `
-
-      <div class="verdict-box ${verdictClass}">
-
-        <div class="verdict-row">
-
-          <span class="verdict-tag ${verdict}">
-            ${
-              verdict === "SCAM"
-                ? "🚨 SCAM"
-                : verdict === "SUSPICIOUS"
-                  ? "⚠️ SUSPICIOUS"
-                  : "✅ LIKELY SAFE"
-            }
-          </span>
-
-          <span class="risk">
-            Risk <strong>${score}/100</strong>
-          </span>
+          This looks dangerous enough
+          to involve a trusted family member.
 
         </div>
 
-        <div class="risk-bar">
+        <small>
 
-          <div
-            class="risk-fill ${riskClass}"
-            style="width:${score}%"
-          ></div>
+          ${esc(
+            data.familyAlertReason ||
+            'Verify before paying or sharing sensitive information.'
+          )}
 
-        </div>
+        </small>
 
-      </div>
+        <button
+          onclick="alertFamily()"
+        >
 
+          👨‍👩‍👧 ALERT FAMILY
 
-      <div class="section-title">
-        🧠 RAKSHA's analysis
-      </div>
-
-      <div class="summary">
-        ${escapeHtml(summary)}
-      </div>
-
-
-      ${
-        flagsHtml
-          ? `
-            <div class="section-title">
-              🚩 Red flags
-            </div>
-
-            <ul class="redflags">
-              ${flagsHtml}
-            </ul>
-          `
-          : ""
-      }
-
-
-      <div class="section-title">
-        🔎 Legitimacy check
-      </div>
-
-      <div class="legitimacy">
-        ${escapeHtml(legitimacy)}
-      </div>
-
-
-      <div class="recommendation">
-
-        <strong>👉 What you should do</strong>
-
-        <br><br>
-
-        ${escapeHtml(recommendation)}
+        </button>
 
       </div>
 
     `;
 
-
-    addBubble(html, "bot");
   }
 
 
-  /* =========================
-     SEND MESSAGE
-  ========================= */
+  /*
+  ELDER EXTRA
+  */
 
-  async function sendMessage() {
+  let elderHTML = '';
 
-    const text =
-      textInput.value.trim();
+  if (mode !== 'normal') {
 
+    elderHTML = `
 
-    if (
-      !text &&
-      !pendingImageBase64
-    ) {
-      return;
-    }
+      <div
+        class="section ${mode === 'hindi'
+          ? 'hindi'
+          : 'elder'}"
+      >
 
+        <h3>
 
-    /* USER MESSAGE */
-
-    let userHtml = "";
-
-
-    if (pendingImageBase64) {
-
-      userHtml += `
-
-        <img
-          class="attach"
-          src="data:${pendingImageMediaType};base64,${pendingImageBase64}"
-          alt="Attached screenshot"
-        />
-
-      `;
-    }
-
-
-    if (text) {
-
-      userHtml +=
-        escapeHtml(text);
-
-    }
-
-
-    addBubble(
-      userHtml,
-      "user"
-    );
-
-
-    /* PAYLOAD */
-
-    const payload = {};
-
-
-    if (text) {
-      payload.text = text;
-    }
-
-
-    if (pendingImageBase64) {
-
-      payload.imageBase64 =
-        pendingImageBase64;
-
-      payload.imageMediaType =
-        pendingImageMediaType;
-    }
-
-
-    /* RESET INPUT */
-
-    textInput.value = "";
-
-    clearImage();
-
-    addTyping();
-
-    sendBtn.disabled = true;
-
-
-    /* API CALL */
-
-    try {
-
-      const response =
-        await fetch(
-          backendUrlInput.value.trim(),
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body:
-              JSON.stringify(payload)
+          ${
+            mode === 'hindi'
+            ? '🇮🇳 हिंदी में'
+            : '👵 Simple explanation'
           }
-        );
 
+        </h3>
 
-      let data;
+        ${esc(
+          mode === 'hindi'
+          ? data.hindiExplanation
+          : data.elderExplanation
+        )}
 
-      try {
+      </div>
 
-        data =
-          await response.json();
+    `;
 
-      } catch {
-
-        throw new Error(
-          "Backend returned an invalid response."
-        );
-
-      }
-
-
-      removeTyping();
-
-
-      if (!response.ok) {
-
-        const errorMessage =
-          data.details ||
-          data.error ||
-          "AI analysis failed.";
-
-        addBubble(
-          `⚠️ ${escapeHtml(errorMessage)}`,
-          "bot"
-        );
-
-        return;
-      }
-
-
-      if (data.error) {
-
-        addBubble(
-          `⚠️ ${escapeHtml(data.error)}`,
-          "bot"
-        );
-
-        return;
-      }
-
-
-      displayResult(data);
-
-
-    } catch (error) {
-
-      removeTyping();
-
-      addBubble(
-        `
-          ⚠️ <strong>RAKSHA couldn't connect.</strong>
-          <br><br>
-          Make sure the backend is running on:
-          <br>
-          <code>${escapeHtml(
-            backendUrlInput.value
-          )}</code>
-          <br><br>
-          ${escapeHtml(error.message)}
-        `,
-        "bot"
-      );
-
-    } finally {
-
-      sendBtn.disabled = false;
-
-      textInput.focus();
-    }
   }
 
 
-  /* =========================
-     EVENTS
-  ========================= */
+  return `
 
-  sendBtn.addEventListener(
-    "click",
-    sendMessage
+    <div class="card">
+
+      <div class="pill">
+
+        ${esc(
+          data.scamType ||
+          'Fraud Analysis'
+        )}
+
+      </div>
+
+
+      <div
+        class="verdict ${verdict}"
+      >
+
+        ${
+          verdict === 'SCAM'
+          ? '🔴'
+          : verdict === 'SAFE'
+          ? '🟢'
+          : '🟡'
+        }
+
+        ${verdict}
+
+      </div>
+
+
+      <div
+        class="score ${verdict}"
+      >
+
+        ${score}/100
+
+      </div>
+
+
+      <div class="confidence">
+
+        AI confidence:
+        <b>${confidence}%</b>
+
+      </div>
+
+
+      <div>
+
+        ${esc(explanation)}
+
+      </div>
+
+
+      <div class="section">
+
+        <h3>
+          🚨 WHY RAKSHA FLAGGED IT
+        </h3>
+
+        ${
+          flags ||
+          '<div class="flag">No major red flags detected.</div>'
+        }
+
+      </div>
+
+
+      <div class="section">
+
+        <h3>
+          📊 RISK SIGNALS
+        </h3>
+
+        ${
+          signals ||
+          '<div>No major signals detected.</div>'
+        }
+
+      </div>
+
+
+      <div class="section">
+
+        <h3>
+          🛡️ WHAT TO DO NOW
+        </h3>
+
+        <ul class="actions">
+
+          ${
+            actions ||
+            '<li>Verify the information through an official source.</li>'
+          }
+
+        </ul>
+
+      </div>
+
+
+      ${elderHTML}
+
+      ${familyHTML}
+
+    </div>
+
+  `;
+
+}
+
+
+/*
+========================================================
+FAMILY SHIELD DEMO
+========================================================
+*/
+
+function alertFamily() {
+
+  const box =
+    $('familyBox');
+
+  if (!box)
+    return;
+
+  box.innerHTML = `
+
+    <h3>
+      ✅ Family Alert Prepared
+    </h3>
+
+    <div class="family-success">
+
+      A trusted family member would be
+      alerted in the full RAKSHA system.
+
+      <br><br>
+
+      Demo notification:
+
+      <br><br>
+
+      "RAKSHA detected a high-risk scam.
+      Please check on your family member
+      before they respond or make a payment."
+
+    </div>
+
+  `;
+
+}
+
+
+/*
+========================================================
+SEND
+========================================================
+*/
+
+async function send() {
+
+  const text =
+    $('text')
+      .value
+      .trim();
+
+
+  if (
+    !text &&
+    !image &&
+    !audio
+  ) {
+
+    return;
+
+  }
+
+
+  let userContent = '';
+
+
+  if (image) {
+
+    userContent +=
+      '<div>📸 Screenshot attached</div>';
+
+  }
+
+
+  if (audio) {
+
+    userContent +=
+      '<div>🎙️ Voice recording attached</div>';
+
+  }
+
+
+  if (text) {
+
+    userContent +=
+      `<div>${esc(text)}</div>`;
+
+  }
+
+
+  add(
+    userContent,
+    'user'
   );
 
 
-  textInput.addEventListener(
-    "keydown",
+  $('text').value = '';
+
+  typing();
+
+
+  const payload = {};
+
+
+  if (text) {
+
+    payload.text =
+      text;
+
+  }
+
+
+  if (image) {
+
+    payload.imageBase64 =
+      image.base64;
+
+    payload.imageMediaType =
+      image.mime;
+
+  }
+
+
+  if (audio) {
+
+    payload.audioBase64 =
+      audio.base64;
+
+    payload.audioMediaType =
+      audio.mime;
+
+  }
+
+
+  image = null;
+
+  audio = null;
+
+  $('preview')
+    .style.display =
+    'none';
+
+
+  try {
+
+    const response =
+      await fetch(
+        $('backend').value,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(payload)
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    stopTyping();
+
+
+    if (
+      !response.ok ||
+      data.error
+    ) {
+
+      add(
+
+        `
+        ⚠️ ${esc(
+          data.error ||
+          'Analysis failed'
+        )}
+
+        <br>
+
+        <small>
+          ${esc(
+            data.details || ''
+          )}
+        </small>
+        `,
+
+        'bot'
+
+      );
+
+      return;
+
+    }
+
+
+    add(
+      resultCard(data),
+      'bot'
+    );
+
+
+  }
+
+  catch (error) {
+
+    stopTyping();
+
+    add(
+
+      `
+      ⚠️ Backend not reachable.
+
+      <br><br>
+
+      Start the Node server and
+      check the Backend URL.
+      `,
+
+      'bot'
+
+    );
+
+  }
+
+}
+
+
+/*
+========================================================
+EVENTS
+========================================================
+*/
+
+$('send').onclick =
+  send;
+
+
+$('text')
+  .addEventListener(
+    'keydown',
     event => {
 
       if (
-        event.key === "Enter" &&
+        event.key === 'Enter' &&
         !event.shiftKey
       ) {
 
         event.preventDefault();
 
-        sendMessage();
+        send();
+
       }
+
     }
   );
 
 
-  /* =========================
-     DEMO MESSAGE
-  ========================= */
+$('clearBtn').onclick =
+  () => {
 
-  textInput.focus();
+    messages.innerHTML = `
+
+      <div class="bubble bot">
+
+        Chat cleared.
+
+        <br><br>
+
+        Send another suspicious
+        message, screenshot or voice recording.
+
+      </div>
+
+    `;
+
+  };
 
 </script>
 
